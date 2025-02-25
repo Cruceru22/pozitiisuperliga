@@ -1,7 +1,8 @@
 'use client';
 
+import { Suspense } from 'react';
 import { useState } from 'react';
-import { Standings } from '~/components/Standings';
+import Standings from '~/components/Standings';
 import { Teams } from '~/components/Teams';
 import FootballNews from '~/components/FootballNews';
 import { t } from '../utils/translations';
@@ -16,63 +17,47 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState('standings');
 
   return (
-    <div>
-      {/* SEO-friendly heading */}
-      <h1 className="text-3xl font-bold text-gray-800 mb-6 hidden md:block">
-        Poziții SuperLiga - Clasamente și Statistici Fotbal Românesc
-      </h1>
-      
-      {/* Tabs */}
-      <div className="bg-white rounded-lg shadow-md overflow-hidden mb-8">
-        <nav className="flex" aria-label="Tabs">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`
-                flex-1 whitespace-nowrap py-4 px-1 text-sm md:text-base font-medium transition-all duration-200
-                ${activeTab === tab.id
-                  ? 'bg-blue-50 text-blue-700 border-t-4 border-blue-600'
-                  : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50 border-t-4 border-transparent'
-                }
-              `}
-            >
-              <span className="flex items-center justify-center">
-                <span className="mr-2">{tab.icon}</span>
-                {tab.label}
-              </span>
-            </button>
-          ))}
-        </nav>
-      </div>
+    <main className="flex min-h-screen flex-col items-center justify-between p-4 md:p-8">
+      <div className="w-full max-w-7xl">
+        <h1 className="text-3xl font-bold mb-6 text-center">
+          {t('Poziții SuperLiga')} - {t('Romanian Football Stats')}
+        </h1>
+        
+        <div className="mb-8">
+          <div className="flex border-b border-gray-200">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                className={`py-2 px-4 font-medium text-sm flex items-center ${
+                  activeTab === tab.id
+                    ? 'border-b-2 border-blue-500 text-blue-600'
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+                onClick={() => setActiveTab(tab.id)}
+              >
+                <span className="flex items-center justify-center">
+                  <span className="mr-2">{tab.icon}</span>
+                  {tab.label}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
 
-      {/* Content */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        {activeTab === 'standings' && (
-          <>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-              {t('Standings')} - Poziții SuperLiga
-            </h2>
-            <Standings />
-          </>
-        )}
-        {activeTab === 'teams' && (
-          <>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-              {t('Teams')} - Echipe SuperLiga
-            </h2>
-            <Teams />
-          </>
-        )}
-        {activeTab === 'news' && (
-          <>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-              {t('Football News')} - Știri SuperLiga
-            </h2>
-            <FootballNews />
-          </>
-        )}
+        <div className="bg-white rounded-lg shadow-md p-4 md:p-6">
+          <h2 className="text-xl font-semibold mb-4">
+            {activeTab === 'standings' && t('Clasament SuperLiga')}
+            {activeTab === 'teams' && t('Teams')}
+            {activeTab === 'news' && t('Romanian Football News')}
+          </h2>
+          
+          <Suspense fallback={<div>Loading...</div>}>
+            {activeTab === 'standings' && <Standings />}
+            {activeTab === 'teams' && <Teams />}
+            {activeTab === 'news' && <FootballNews />}
+          </Suspense>
+        </div>
       </div>
-    </div>
+    </main>
   );
 }

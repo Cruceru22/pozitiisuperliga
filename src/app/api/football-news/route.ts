@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 
-// Add caching configuration
-export const revalidate = parseInt(process.env.REVALIDATE_NEWS || '1800', 10); // Revalidate based on env or default to 30 minutes
+// Add caching configuration using export const dynamic
+export const dynamic = 'force-dynamic';
+// Remove the revalidate export and use next.revalidate in fetch options
 
 export async function GET() {
   try {
@@ -24,14 +25,14 @@ export async function GET() {
       headers: {
         'X-Api-Key': apiKey
       },
-      next: { revalidate: parseInt(process.env.REVALIDATE_NEWS || '1800', 10) } // Cache based on env or default to 30 minutes
+      next: { revalidate: parseInt(process.env.REVALIDATE_NEWS ?? '1800', 10) } // Cache based on env or default to 30 minutes
     });
     
     if (!response.ok) {
       throw new Error(`NewsAPI responded with status: ${response.status}`);
     }
     
-    const data = await response.json();
+    const data = await response.json() as Record<string, unknown>;
     
     // Return the response
     return NextResponse.json(data);

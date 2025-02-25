@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 
-// Add caching configuration
-export const revalidate = parseInt(process.env.REVALIDATE_TEAMS || '3600', 10); // Revalidate based on env or default to 1 hour
+// Add caching configuration using export const dynamic
+export const dynamic = 'force-dynamic';
+// Remove the revalidate export and use next.revalidate in fetch options
 
 export async function GET() {
   try {
@@ -20,7 +21,7 @@ export async function GET() {
     
     // Fetch team data with cache configuration
     const response = await fetch(url, { 
-      next: { revalidate: parseInt(process.env.REVALIDATE_TEAMS || '3600', 10) } // Cache based on env or default to 1 hour
+      next: { revalidate: parseInt(process.env.REVALIDATE_TEAMS ?? '3600', 10) } // Cache based on env or default to 1 hour
     });
     
     if (!response.ok) {
@@ -30,9 +31,13 @@ export async function GET() {
     const data = await response.json();
     
     // Check if the response is an error message from the API
-    if (typeof data === 'object' && !Array.isArray(data) && data.error) {
+    if (typeof data === 'object' && !Array.isArray(data) && 'error' in data) {
+      const errorData = data as Record<string, unknown>;
       return NextResponse.json(
-        { error: 'API Error', message: data.message || JSON.stringify(data) },
+        { 
+          error: 'API Error', 
+          message: typeof errorData.message === 'string' ? errorData.message : JSON.stringify(errorData) 
+        },
         { status: 400 }
       );
     }

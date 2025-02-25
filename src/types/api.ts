@@ -73,7 +73,24 @@ export interface Standing {
   overall_league_GF: string;
   overall_league_GA: string;
   overall_league_PTS: string;
-  team_badge: string;
+  home_league_position: string;
+  home_league_payed: string;
+  home_league_W: string;
+  home_league_D: string;
+  home_league_L: string;
+  home_league_GF: string;
+  home_league_GA: string;
+  home_league_PTS: string;
+  away_league_position: string;
+  away_league_payed: string;
+  away_league_W: string;
+  away_league_D: string;
+  away_league_L: string;
+  away_league_GF: string;
+  away_league_GA: string;
+  away_league_PTS: string;
+  league_round?: string;
+  team_badge?: string;
 }
 
 export interface Match {

@@ -26,19 +26,19 @@ async function fetchFromApi(params: Record<string, string>, tag: string) {
     throw new Error(`API call failed: ${response.statusText}`);
   }
 
-  const data = await response.json();
+  const data = await response.json() as unknown;
   
   // Ensure we always return an array
   if (data && typeof data === 'object') {
     if (Array.isArray(data)) {
       return data;
-    } else if (Object.keys(data).length === 0) {
+    } else if (Object.keys(data as Record<string, unknown>).length === 0) {
       return [];
-    } else if ('error' in data) {
-      throw new Error(data.error);
+    } else if ('error' in (data as Record<string, unknown>)) {
+      throw new Error(String((data as Record<string, unknown>).error));
     } else {
       // If it's an object with numeric keys, convert to array
-      const values = Object.values(data);
+      const values = Object.values(data as Record<string, unknown>);
       if (values.length > 0) {
         return values;
       }
@@ -62,9 +62,8 @@ export async function GET(request: Request) {
       params[key] = value;
     });
 
-    // Different cache tags and revalidation times for different types of data
+    // Different cache tags for different types of data
     let tag = '';
-    let revalidateTime = 300; // Default 5 minutes
 
     switch (action) {
       case 'get_events':
@@ -72,24 +71,19 @@ export async function GET(request: Request) {
         // Live matches should revalidate more frequently
         if (params.match_live === '1') {
           tag = 'live-matches';
-          revalidateTime = 60; // 1 minute for live matches
         }
         break;
       case 'get_standings':
-        tag = `standings-${params.league_id || 'all'}`;
-        revalidateTime = parseInt(process.env.REVALIDATE_STANDINGS || '3600', 10);
+        tag = `standings-${params.league_id ?? 'all'}`;
         break;
       case 'get_teams':
-        tag = `teams-${params.league_id || 'all'}`;
-        revalidateTime = parseInt(process.env.REVALIDATE_TEAMS || '3600', 10);
+        tag = `teams-${params.league_id ?? 'all'}`;
         break;
       case 'get_leagues':
         tag = 'leagues';
-        revalidateTime = 86400; // 24 hours for leagues
         break;
       case 'get_topscorers':
-        tag = `topscorers-${params.league_id || 'all'}`;
-        revalidateTime = 3600; // 1 hour for top scorers
+        tag = `topscorers-${params.league_id ?? 'all'}`;
         break;
       default:
         tag = 'default';

@@ -8,9 +8,10 @@ export const ROMANIAN_LEAGUES = [
 
 export const ROMANIAN_LEAGUE_IDS = ROMANIAN_LEAGUES.map(league => league.id);
 
-// Use environment variable for API key
-const API_KEY = process.env.NEXT_PUBLIC_APIFOOTBALL_KEY;
-const API_BASE_URL = 'https://apiv3.apifootball.com/';
+// API base URL is now only used in the server-side API route
+// We don't need these variables anymore as we're using environment variables in the API route
+// const API_KEY = process.env.NEXT_PUBLIC_APIFOOTBALL_KEY;
+// const API_BASE_URL = 'https://apiv3.apifootball.com/';
 
 async function fetchApi<T>(params: Record<string, string> = {}): Promise<T> {
   const searchParams = new URLSearchParams(params);
@@ -20,7 +21,7 @@ async function fetchApi<T>(params: Record<string, string> = {}): Promise<T> {
     throw new Error(`API call failed: ${response.statusText}`);
   }
 
-  return response.json();
+  return response.json() as Promise<T>;
 }
 
 export const api = {
@@ -55,7 +56,17 @@ export const api = {
   },
 
   getTopScorers: (leagueId: string) => {
-    return fetchApi<any[]>({
+    // Define a proper type for top scorers
+    type TopScorer = {
+      player_name: string;
+      player_key: string;
+      team_name: string;
+      goals: string;
+      assists: string;
+      penalty_goals: string;
+    };
+    
+    return fetchApi<TopScorer[]>({
       action: 'get_topscorers',
       league_id: leagueId
     });
@@ -63,6 +74,6 @@ export const api = {
 
   revalidate: async (tag: string) => {
     const response = await fetch(`/api?tag=${tag}`, { method: 'POST' });
-    return response.json();
+    return response.json() as Promise<{ revalidated: boolean; now: number }>;
   }
 }; 
