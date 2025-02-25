@@ -1,12 +1,16 @@
 import { NextResponse } from 'next/server';
 
 // Add caching configuration
-export const revalidate = 3600; // Revalidate every hour
+export const revalidate = parseInt(process.env.REVALIDATE_TEAMS || '3600', 10); // Revalidate based on env or default to 1 hour
 
 export async function GET() {
   try {
-    // Use the correct APIFootball API key
-    const apiKey = '54e4a9cc1605438a9fafca07954ad3a30f619e80952c02ce83cf2d4481934362';
+    // Use the API key from environment variables
+    const apiKey = process.env.NEXT_PUBLIC_APIFOOTBALL_KEY;
+    
+    if (!apiKey) {
+      throw new Error('API key is not configured');
+    }
     
     // Romanian Liga 1 league ID
     const leagueId = '272'; // Liga 1 Romania
@@ -16,7 +20,7 @@ export async function GET() {
     
     // Fetch team data with cache configuration
     const response = await fetch(url, { 
-      next: { revalidate: 3600 } // Cache for 1 hour
+      next: { revalidate: parseInt(process.env.REVALIDATE_TEAMS || '3600', 10) } // Cache based on env or default to 1 hour
     });
     
     if (!response.ok) {

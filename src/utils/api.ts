@@ -8,7 +8,8 @@ export const ROMANIAN_LEAGUES = [
 
 export const ROMANIAN_LEAGUE_IDS = ROMANIAN_LEAGUES.map(league => league.id);
 
-const API_KEY = '54e4a9cc1605438a9fafca07954ad3a30f619e80952c02ce83cf2d4481934362';
+// Use environment variable for API key
+const API_KEY = process.env.NEXT_PUBLIC_APIFOOTBALL_KEY;
 const API_BASE_URL = 'https://apiv3.apifootball.com/';
 
 async function fetchApi<T>(params: Record<string, string> = {}): Promise<T> {

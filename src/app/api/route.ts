@@ -1,10 +1,14 @@
 import { NextResponse } from 'next/server';
 import { revalidateTag } from 'next/cache';
 
-const API_KEY = '54e4a9cc1605438a9fafca07954ad3a30f619e80952c02ce83cf2d4481934362';
+const API_KEY = process.env.NEXT_PUBLIC_APIFOOTBALL_KEY;
 const API_BASE_URL = 'https://apiv3.apifootball.com/';
 
 async function fetchFromApi(params: Record<string, string>, tag: string) {
+  if (!API_KEY) {
+    throw new Error('API key is not configured');
+  }
+
   const searchParams = new URLSearchParams({
     ...params,
     APIkey: API_KEY,
@@ -60,25 +64,32 @@ export async function GET(request: Request) {
 
     // Different cache tags and revalidation times for different types of data
     let tag = '';
+    let revalidateTime = 300; // Default 5 minutes
+
     switch (action) {
       case 'get_events':
         tag = 'events';
         // Live matches should revalidate more frequently
         if (params.match_live === '1') {
           tag = 'live-matches';
+          revalidateTime = 60; // 1 minute for live matches
         }
         break;
       case 'get_standings':
         tag = `standings-${params.league_id || 'all'}`;
+        revalidateTime = parseInt(process.env.REVALIDATE_STANDINGS || '3600', 10);
         break;
       case 'get_teams':
         tag = `teams-${params.league_id || 'all'}`;
+        revalidateTime = parseInt(process.env.REVALIDATE_TEAMS || '3600', 10);
         break;
       case 'get_leagues':
         tag = 'leagues';
+        revalidateTime = 86400; // 24 hours for leagues
         break;
       case 'get_topscorers':
         tag = `topscorers-${params.league_id || 'all'}`;
+        revalidateTime = 3600; // 1 hour for top scorers
         break;
       default:
         tag = 'default';
@@ -89,7 +100,7 @@ export async function GET(request: Request) {
   } catch (error) {
     console.error('API Error:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch data' },
+      { error: 'Failed to fetch data', message: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }
@@ -109,7 +120,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ revalidated: true, now: Date.now() });
   } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to revalidate' },
+      { error: 'Failed to revalidate', message: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }

@@ -1,29 +1,83 @@
-# Create T3 App
+# Poziții SuperLiga
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+A web application for tracking Romanian football league standings, teams, and news.
 
-## What's next? How do I make an app with this?
+## Features
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+- View standings for Romanian football leagues
+- Browse team information and player details
+- Read the latest football news from Romania
+- Responsive design for all devices
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+## Technologies Used
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+- Next.js 14 with App Router
+- TypeScript
+- Tailwind CSS
+- API Football for football data
+- News API for football news
 
-## Learn More
+## Getting Started
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+### Prerequisites
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+- Node.js 18.17 or later
+- npm or yarn
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+### Installation
 
-## How do I deploy this?
+1. Clone the repository:
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+   ```bash
+   git clone https://github.com/yourusername/pozitiisuperliga.git
+   cd pozitiisuperliga
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
+
+3. Set up environment variables:
+
+   - Copy `.env.example` to `.env`:
+     ```bash
+     cp .env.example .env
+     ```
+   - Edit `.env` and add your API keys:
+     - Get an API key from [API Football](https://apifootball.com/)
+     - Get an API key from [News API](https://newsapi.org/)
+
+4. Run the development server:
+
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
+
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Deployment
+
+This project is configured for deployment on Vercel. Make sure to set up the environment variables in your Vercel project settings.
+
+## Environment Variables
+
+The following environment variables are required:
+
+- `NEXT_PUBLIC_APIFOOTBALL_KEY`: Your API Football API key
+- `NEXT_PUBLIC_NEWSAPI_KEY`: Your News API key
+
+Optional cache configuration:
+
+- `REVALIDATE_STANDINGS`: Cache duration for standings (in seconds, default: 3600)
+- `REVALIDATE_TEAMS`: Cache duration for teams (in seconds, default: 3600)
+- `REVALIDATE_NEWS`: Cache duration for news (in seconds, default: 1800)
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.

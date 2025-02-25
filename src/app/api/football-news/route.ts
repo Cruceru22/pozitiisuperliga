@@ -1,12 +1,16 @@
 import { NextResponse } from 'next/server';
 
 // Add caching configuration
-export const revalidate = 1800; // Revalidate every 30 minutes
+export const revalidate = parseInt(process.env.REVALIDATE_NEWS || '1800', 10); // Revalidate based on env or default to 30 minutes
 
 export async function GET() {
   try {
-    // API key
-    const apiKey = 'ef6c9168e80943a288d7a17d4215108d';
+    // API key from environment variables
+    const apiKey = process.env.NEXT_PUBLIC_NEWSAPI_KEY;
+    
+    if (!apiKey) {
+      throw new Error('News API key is not configured');
+    }
     
     // Build the URL with query parameters
     const url = new URL('https://newsapi.org/v2/everything');
@@ -20,7 +24,7 @@ export async function GET() {
       headers: {
         'X-Api-Key': apiKey
       },
-      next: { revalidate: 1800 } // Cache for 30 minutes
+      next: { revalidate: parseInt(process.env.REVALIDATE_NEWS || '1800', 10) } // Cache based on env or default to 30 minutes
     });
     
     if (!response.ok) {
