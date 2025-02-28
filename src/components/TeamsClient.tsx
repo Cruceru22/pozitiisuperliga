@@ -19,11 +19,13 @@ export default function TeamsClient() {
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [activeTab, setActiveTab] = useState<'squad' | 'info'>('squad');
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const teamDetailsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     async function fetchTeams() {
       try {
+        setIsLoading(true);
         // Use the first Romanian league ID (Liga I)
         const leagueId = ROMANIAN_LEAGUES[0].id;
         const response = await fetch(`/api/teams?league_id=${leagueId}`);
@@ -53,6 +55,8 @@ export default function TeamsClient() {
         trackEvent('teams_load_error', { 
           error: err instanceof Error ? err.message : String(err)
         });
+      } finally {
+        setIsLoading(false);
       }
     }
 
@@ -243,121 +247,151 @@ export default function TeamsClient() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-      {/* Team List Sidebar */}
-      <div className="lg:col-span-1 bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
-        <div className="p-4 bg-gradient-to-r from-green-700 to-green-800 text-white">
-          <h3 className="font-semibold text-lg flex items-center">
-            <Flag className="w-5 h-5 mr-2" />
-            Echipe
-          </h3>
-          <p className="text-xs text-green-100 mt-1 lg:hidden">Selectați o echipă pentru a vedea detalii</p>
+      {/* Error Message */}
+      {error && (
+        <div className="lg:col-span-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded mb-4 flex items-start">
+          <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0 mt-0.5" />
+          <div>
+            <h3 className="font-bold">Eroare la încărcarea echipelor</h3>
+            <p>{error}</p>
+          </div>
         </div>
-        <div className="overflow-y-auto max-h-[600px]">
-          {teams.map((team) => (
-            <button
-              key={team.team_key}
-              className={`w-full text-left p-3 flex items-center hover:bg-gray-50 transition-colors border-b border-gray-100 group ${
-                selectedTeam?.team_key === team.team_key ? 'bg-green-50 border-l-4 border-green-500 pl-2' : ''
-              }`}
-              onClick={() => handleTeamSelect(team)}
-            >
-              <img 
-                src={getImageSrc(team.team_badge) || '/placeholder-team.svg'} 
-                alt={team.team_name} 
-                className="w-8 h-8 object-contain mr-3"
-              />
-              <span className={`flex-1 ${selectedTeam?.team_key === team.team_key ? 'font-medium text-green-800' : ''}`}>
-                {team.team_name}
-              </span>
-              <ChevronRight className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity lg:hidden" />
-            </button>
-          ))}
-        </div>
-      </div>
+      )}
 
-      {/* Team Details */}
-      <div ref={teamDetailsRef} className="lg:col-span-3 scroll-mt-4">
-        {selectedTeam ? (
-          <div className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
-            {/* Team Header */}
-            <div className="p-6 bg-gradient-to-r from-green-700 to-green-800 text-white border-b flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
-              <div className="w-24 h-24 bg-white rounded-full p-2 flex items-center justify-center">
-                <img 
-                  src={getImageSrc(selectedTeam.team_badge) || '/placeholder-team.svg'} 
-                  alt={selectedTeam.team_name} 
-                  className="w-20 h-20 object-contain"
-                />
-              </div>
-              <div className="text-center md:text-left">
-                <h2 className="text-2xl font-bold">{selectedTeam.team_name}</h2>
-                <div className="flex flex-wrap justify-center md:justify-start gap-2 mt-2">
-                  <div className="inline-flex items-center bg-green-600/30 px-2 py-1 rounded text-sm">
-                    <Flag className="w-4 h-4 mr-1" />
-                    {selectedTeam.team_country}
+      {/* Loading State */}
+      {isLoading && (
+        <div className="lg:col-span-4 p-8 bg-white rounded-lg shadow-md text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-700 mb-4"></div>
+          <p className="text-lg font-medium text-gray-700">Se încarcă echipele...</p>
+          <p className="text-sm text-gray-500 mt-2">Vă rugăm să așteptați câteva momente</p>
+        </div>
+      )}
+
+      {!isLoading && !error && (
+        <>
+          {/* Team List Sidebar */}
+          <div className="lg:col-span-1 bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
+            <div className="p-4 bg-gradient-to-r from-green-700 to-green-800 text-white">
+              <h3 className="font-semibold text-lg flex items-center">
+                <Flag className="w-5 h-5 mr-2" />
+                Echipe
+              </h3>
+              <p className="text-xs text-green-100 mt-1 lg:hidden">Selectați o echipă pentru a vedea detalii</p>
+            </div>
+            <div className="overflow-y-auto max-h-[600px]">
+              {teams.length === 0 ? (
+                <div className="p-4 text-center text-gray-500">
+                  Nu există echipe disponibile
+                </div>
+              ) : (
+                teams.map((team) => (
+                  <button
+                    key={team.team_key}
+                    className={`w-full text-left p-3 flex items-center hover:bg-gray-50 transition-colors border-b border-gray-100 group ${
+                      selectedTeam?.team_key === team.team_key ? 'bg-green-50 border-l-4 border-green-500 pl-2' : ''
+                    }`}
+                    onClick={() => handleTeamSelect(team)}
+                  >
+                    <img 
+                      src={getImageSrc(team.team_badge) || '/placeholder-team.svg'} 
+                      alt={team.team_name} 
+                      className="w-8 h-8 object-contain mr-3"
+                    />
+                    <span className={`flex-1 ${selectedTeam?.team_key === team.team_key ? 'font-medium text-green-800' : ''}`}>
+                      {team.team_name}
+                    </span>
+                    <ChevronRight className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity lg:hidden" />
+                  </button>
+                ))
+              )}
+            </div>
+          </div>
+
+          {/* Team Details */}
+          <div ref={teamDetailsRef} className="lg:col-span-3 scroll-mt-4">
+            {selectedTeam ? (
+              <div className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
+                {/* Team Header */}
+                <div className="p-6 bg-gradient-to-r from-green-700 to-green-800 text-white border-b flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
+                  <div className="w-24 h-24 bg-white rounded-full p-2 flex items-center justify-center">
+                    <img 
+                      src={getImageSrc(selectedTeam.team_badge) || '/placeholder-team.svg'} 
+                      alt={selectedTeam.team_name} 
+                      className="w-20 h-20 object-contain"
+                    />
                   </div>
-                  <div className="inline-flex items-center bg-green-600/30 px-2 py-1 rounded text-sm">
-                    <Calendar className="w-4 h-4 mr-1" />
-                    Fondat: {selectedTeam.team_founded}
-                  </div>
-                  {selectedTeam.coaches && selectedTeam.coaches.length > 0 && selectedTeam.coaches[0] && (
-                    <div className="inline-flex items-center bg-green-600/30 px-2 py-1 rounded text-sm">
-                      <User className="w-4 h-4 mr-1" />
-                      Antrenor: {selectedTeam.coaches[0].coach_name}
+                  <div className="text-center md:text-left">
+                    <h2 className="text-2xl font-bold">{selectedTeam.team_name}</h2>
+                    <div className="flex flex-wrap justify-center md:justify-start gap-2 mt-2">
+                      <div className="inline-flex items-center bg-green-600/30 px-2 py-1 rounded text-sm">
+                        <Flag className="w-4 h-4 mr-1" />
+                        {selectedTeam.team_country}
+                      </div>
+                      <div className="inline-flex items-center bg-green-600/30 px-2 py-1 rounded text-sm">
+                        <Calendar className="w-4 h-4 mr-1" />
+                        Fondat: {selectedTeam.team_founded}
+                      </div>
+                      {selectedTeam.coaches && selectedTeam.coaches.length > 0 && selectedTeam.coaches[0] && (
+                        <div className="inline-flex items-center bg-green-600/30 px-2 py-1 rounded text-sm">
+                          <User className="w-4 h-4 mr-1" />
+                          Antrenor: {selectedTeam.coaches[0].coach_name}
+                        </div>
+                      )}
                     </div>
-                  )}
+                  </div>
+                </div>
+
+                {/* Tabs */}
+                <div className="border-b border-gray-200">
+                  <nav className="-mb-px flex" aria-label="Tabs">
+                    <button
+                      onClick={() => handleTabChange('squad')}
+                      className={`
+                        whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm flex items-center
+                        ${activeTab === 'squad'
+                          ? 'border-green-500 text-green-600'
+                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                        }
+                      `}
+                    >
+                      <Users className="w-4 h-4 mr-2" />
+                      Lot
+                    </button>
+                    <button
+                      onClick={() => handleTabChange('info')}
+                      className={`
+                        whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm flex items-center
+                        ${activeTab === 'info'
+                          ? 'border-green-500 text-green-600'
+                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                        }
+                      `}
+                    >
+                      <Building className="w-4 h-4 mr-2" />
+                      Informații Stadion
+                    </button>
+                  </nav>
+                </div>
+
+                {/* Tab Content */}
+                <div className="p-6">
+                  {activeTab === 'squad' ? renderSquadContent() : renderStadiumContent()}
                 </div>
               </div>
-            </div>
-
-            {/* Tabs */}
-            <div className="border-b border-gray-200">
-              <nav className="-mb-px flex" aria-label="Tabs">
-                <button
-                  onClick={() => handleTabChange('squad')}
-                  className={`
-                    whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm flex items-center
-                    ${activeTab === 'squad'
-                      ? 'border-green-500 text-green-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                    }
-                  `}
-                >
-                  <Users className="w-4 h-4 mr-2" />
-                  Lot
-                </button>
-                <button
-                  onClick={() => handleTabChange('info')}
-                  className={`
-                    whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm flex items-center
-                    ${activeTab === 'info'
-                      ? 'border-green-500 text-green-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                    }
-                  `}
-                >
-                  <Building className="w-4 h-4 mr-2" />
-                  Informații Stadion
-                </button>
-              </nav>
-            </div>
-
-            {/* Tab Content */}
-            <div className="p-6">
-              {activeTab === 'squad' ? renderSquadContent() : renderStadiumContent()}
-            </div>
+            ) : (
+              <div className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 p-8 text-center">
+                <div className="flex flex-col items-center justify-center py-12">
+                  <Flag className="w-16 h-16 text-green-600 mb-4" />
+                  <h3 className="text-xl font-bold text-gray-800 mb-2">Selectați o echipă</h3>
+                  <p className="text-gray-600 max-w-md">
+                    Alegeți o echipă din lista din stânga pentru a vedea informații detaliate despre lot și stadion.
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
-        ) : (
-          <div className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 p-8 text-center">
-            <div className="flex flex-col items-center justify-center py-12">
-              <Flag className="w-16 h-16 text-green-600 mb-4" />
-              <h3 className="text-xl font-bold text-gray-800 mb-2">Selectați o echipă</h3>
-              <p className="text-gray-600 max-w-md">
-                Alegeți o echipă din lista din stânga pentru a vedea informații detaliate despre lot și stadion.
-              </p>
-            </div>
-          </div>
-        )}
-      </div>
+        </>
+      )}
     </div>
   );
 } 

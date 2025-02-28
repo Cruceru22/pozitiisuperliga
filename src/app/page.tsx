@@ -72,13 +72,6 @@ export default function Home() {
 
       {/* Features Section */}
       <section>
-        <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center relative">
-          <span className="inline-block relative px-4 py-2 bg-white/80 rounded-lg shadow-sm">
-            Explorează Fotbalul Românesc
-            <span className="absolute bottom-0 left-0 w-full h-1 bg-green-600"></span>
-          </span>
-        </h2>
-        
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <FeatureCard
             title="Clasamente"

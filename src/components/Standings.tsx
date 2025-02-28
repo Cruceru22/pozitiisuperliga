@@ -14,10 +14,12 @@ export function Standings({ defaultLeagueId }: StandingsProps) {
   const [selectedLeague, setSelectedLeague] = useState<string>(defaultLeagueId);
   const [standings, setStandings] = useState<Standing[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     async function fetchStandings() {
       setError(null);
+      setIsLoading(true);
       
       try {
         const response = await fetch(`/api?action=get_standings&league_id=${selectedLeague}`);
@@ -53,6 +55,8 @@ export function Standings({ defaultLeagueId }: StandingsProps) {
           league_id: selectedLeague,
           error: err instanceof Error ? err.message : String(err)
         });
+      } finally {
+        setIsLoading(false);
       }
     }
     
@@ -241,18 +245,21 @@ export function Standings({ defaultLeagueId }: StandingsProps) {
         <label htmlFor="league-select" className="block text-sm font-medium text-gray-700 mb-2">
           Selectează Liga:
         </label>
-        <select
-          id="league-select"
-          value={selectedLeague}
-          onChange={(e) => handleLeagueChange(e.target.value)}
-          className="block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500"
-        >
+        <div className="flex flex-wrap gap-2">
           {ROMANIAN_LEAGUES.map((league) => (
-            <option key={league.id} value={league.id}>
+            <button
+              key={league.id}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                selectedLeague === league.id
+                  ? 'bg-green-700 text-white shadow-md'
+                  : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
+              }`}
+              onClick={() => handleLeagueChange(league.id)}
+            >
               {leagueNames[league.name] || league.name}
-            </option>
+            </button>
           ))}
-        </select>
+        </div>
       </div>
       
       {error ? (
@@ -263,10 +270,41 @@ export function Standings({ defaultLeagueId }: StandingsProps) {
             <p>{error}</p>
           </div>
         </div>
+      ) : isLoading && standings.length === 0 ? (
+        <div className="p-8 bg-white rounded-lg shadow-md text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-700 mb-4"></div>
+          <p className="text-lg font-medium text-gray-700">Se încarcă clasamentul...</p>
+          <p className="text-sm text-gray-500 mt-2">Vă rugăm să așteptați câteva momente</p>
+        </div>
       ) : standings.length === 0 ? (
-        null
+        <div className="p-8 bg-white rounded-lg shadow-md text-center">
+          <Trophy className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+          <h3 className="text-xl font-bold text-gray-800 mb-2">Nu există date disponibile</h3>
+          <p className="text-gray-600">
+            Nu am găsit informații despre clasament pentru liga selectată.
+          </p>
+        </div>
       ) : (
         <>
+          {shouldShowLegend() && (
+            <div className="mb-6 bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+              <h3 className="font-semibold mb-2 text-gray-800">Legendă:</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div className="flex items-center">
+                  <div className="w-4 h-4 bg-green-100 border-l-4 border-green-600 mr-2"></div>
+                  <span className="text-sm">Calificare UEFA Champions League</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-4 h-4 bg-blue-100 border-l-4 border-blue-600 mr-2"></div>
+                  <span className="text-sm">Calificare UEFA Europa League</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-4 h-4 bg-red-100 border-l-4 border-red-600 mr-2"></div>
+                  <span className="text-sm">Retrogradare</span>
+                </div>
+              </div>
+            </div>
+          )}
           {Object.entries(groupedStandings).map(([group, groupStandings]) => (
             <div key={group} className="mb-8 bg-white rounded-lg shadow-md overflow-hidden">
               <div className="bg-green-700 text-white p-3">
@@ -325,29 +363,6 @@ export function Standings({ defaultLeagueId }: StandingsProps) {
                   </tbody>
                 </table>
               </div>
-              
-              {shouldShowLegend() && (
-                <div className="p-4 text-sm text-gray-600 bg-gray-50 border-t">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
-                    <div className="flex items-center">
-                      <div className="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
-                      <span>Calificare Champions League</span>
-                    </div>
-                    <div className="flex items-center">
-                      <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
-                      <span>Calificare Europa League</span>
-                    </div>
-                    <div className="flex items-center">
-                      <div className="w-3 h-3 bg-teal-500 rounded-full mr-2"></div>
-                      <span>Calificare Conference League</span>
-                    </div>
-                    <div className="flex items-center">
-                      <div className="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
-                      <span>Zona de retrogradare</span>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
           ))}
         </>
