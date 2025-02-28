@@ -14,10 +14,9 @@ export const dynamic = 'force-dynamic';
 export default function NewsPage() {
   return (
     <div className="container mx-auto p-2 sm:p-4">
-      <div className="mb-8 text-center">
+      <div className=" text-center">
         <h1 className="text-3xl font-bold mb-4 inline-flex items-center justify-center">
           <span className="bg-green-600 text-white px-4 py-2 rounded-lg">
-            <Newspaper className="h-6 w-6 inline-block mr-2" />
             Știri Fotbal
           </span>
         </h1>
