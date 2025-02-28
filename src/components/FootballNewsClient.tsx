@@ -119,7 +119,14 @@ export default function FootballNewsClient() {
     <div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {articles.map((article, index) => (
-          <div key={index} className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 border border-green-100 flex flex-col h-full transform hover:-translate-y-1">
+          <a 
+            key={index} 
+            href={article.url} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            onClick={() => handleArticleClick(article)}
+            className="block bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 border border-green-100 flex flex-col h-full transform hover:-translate-y-1 cursor-pointer"
+          >
             {article.urlToImage && (
               <div className="h-52 overflow-hidden relative">
                 <img 
@@ -151,18 +158,12 @@ export default function FootballNewsClient() {
               <p className="text-gray-600 mb-4 line-clamp-3">{article.description}</p>
             </div>
             <div className="px-5 py-4 bg-gradient-to-r from-gray-50 to-gray-100 border-t border-gray-200">
-              <a 
-                href={article.url} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="inline-flex items-center bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-medium py-3 px-5 rounded-lg transition-all duration-300 w-full justify-center shadow-sm hover:shadow-md"
-                onClick={() => handleArticleClick(article)}
-              >
+              <div className="inline-flex items-center bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-medium py-3 px-5 rounded-lg transition-all duration-300 w-full justify-center shadow-sm hover:shadow-md">
                 Citește mai mult
                 <ExternalLink className="h-4 w-4 ml-2" />
-              </a>
+              </div>
             </div>
-          </div>
+          </a>
         ))}
       </div>
     </div>
