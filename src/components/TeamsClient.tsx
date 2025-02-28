@@ -154,7 +154,7 @@ export default function TeamsClient({
                     key={player.player_key.toString()} 
                     className="flex items-center space-x-3 p-4 bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow"
                   >
-                    <div className="w-16 h-16 bg-gray-200 rounded-full overflow-hidden flex-shrink-0 border-2 border-blue-500">
+                    <div className="w-16 h-16 bg-gray-200 rounded-full overflow-hidden flex-shrink-0 border-2 border-green-600">
                       <img 
                         src={getImageSrc(player.player_image) || '/placeholder-player.svg'} 
                         alt={player.player_name}
@@ -166,7 +166,7 @@ export default function TeamsClient({
                         {player.player_name}
                       </div>
                       <div className="flex items-center text-sm text-gray-500 mt-1">
-                        <span className="inline-flex items-center bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs font-medium mr-2">
+                        <span className="inline-flex items-center bg-green-600/10 text-green-600 px-2 py-0.5 rounded-full text-xs font-medium mr-2">
                           #{player.player_number}
                         </span>
                         <User className="w-3 h-3 mr-1" />
@@ -271,12 +271,12 @@ export default function TeamsClient({
         <>
           {/* Team List Sidebar */}
           <div className="lg:col-span-1 bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
-            <div className="p-4 bg-gradient-to-r from-blue-700 to-blue-800 text-white">
+            <div className="p-4 bg-green-600 text-white">
               <h3 className="font-semibold text-lg flex items-center">
                 <Flag className="w-5 h-5 mr-2" />
                 Echipe
               </h3>
-              <p className="text-xs text-blue-100 mt-1 lg:hidden">Selectați o echipă pentru a vedea detalii</p>
+              <p className="text-xs text-green-100 mt-1 lg:hidden">Selectați o echipă pentru a vedea detalii</p>
             </div>
             <div className="overflow-y-auto max-h-[600px]">
               {teams.length === 0 ? (
@@ -288,7 +288,7 @@ export default function TeamsClient({
                   <button
                     key={team.team_key}
                     className={`w-full text-left p-3 flex items-center hover:bg-gray-50 transition-colors border-b border-gray-100 group ${
-                      selectedTeam?.team_key === team.team_key ? 'bg-blue-50 border-l-4 border-blue-500 pl-2' : ''
+                      selectedTeam?.team_key === team.team_key ? 'bg-green-50 border-l-4 border-green-600 pl-2' : ''
                     }`}
                     onClick={() => handleTeamSelect(team)}
                   >
@@ -297,7 +297,7 @@ export default function TeamsClient({
                       alt={team.team_name} 
                       className="w-8 h-8 object-contain mr-3"
                     />
-                    <span className={`flex-1 ${selectedTeam?.team_key === team.team_key ? 'font-medium text-blue-800' : ''}`}>
+                    <span className={`flex-1 ${selectedTeam?.team_key === team.team_key ? 'font-medium text-green-600' : ''}`}>
                       {team.team_name}
                     </span>
                     <ChevronRight className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity lg:hidden" />
@@ -312,7 +312,7 @@ export default function TeamsClient({
             {selectedTeam ? (
               <div className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
                 {/* Team Header */}
-                <div className="p-6 bg-gradient-to-r from-blue-700 to-blue-800 text-white border-b flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
+                <div className="p-6 bg-green-600 text-white border-b flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
                   <div className="w-24 h-24 bg-white rounded-full p-2 flex items-center justify-center">
                     <img 
                       src={getImageSrc(selectedTeam.team_badge) || '/placeholder-team.svg'} 
@@ -323,16 +323,16 @@ export default function TeamsClient({
                   <div className="text-center md:text-left">
                     <h2 className="text-2xl font-bold">{selectedTeam.team_name}</h2>
                     <div className="flex flex-wrap justify-center md:justify-start gap-2 mt-2">
-                      <div className="inline-flex items-center bg-blue-600/30 px-2 py-1 rounded text-sm">
+                      <div className="inline-flex items-center bg-green-600/30 px-2 py-1 rounded text-sm">
                         <Flag className="w-4 h-4 mr-1" />
                         {selectedTeam.team_country}
                       </div>
-                      <div className="inline-flex items-center bg-blue-600/30 px-2 py-1 rounded text-sm">
+                      <div className="inline-flex items-center bg-green-600/30 px-2 py-1 rounded text-sm">
                         <Calendar className="w-4 h-4 mr-1" />
                         Fondat: {selectedTeam.team_founded}
                       </div>
                       {selectedTeam.coaches && selectedTeam.coaches.length > 0 && selectedTeam.coaches[0] && (
-                        <div className="inline-flex items-center bg-blue-600/30 px-2 py-1 rounded text-sm">
+                        <div className="inline-flex items-center bg-green-600/30 px-2 py-1 rounded text-sm">
                           <User className="w-4 h-4 mr-1" />
                           Antrenor: {selectedTeam.coaches[0].coach_name}
                         </div>
@@ -349,7 +349,7 @@ export default function TeamsClient({
                       className={`
                         whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm flex items-center
                         ${activeTab === 'squad'
-                          ? 'border-blue-500 text-blue-600'
+                          ? 'border-green-600 text-green-600'
                           : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                         }
                       `}
@@ -362,7 +362,7 @@ export default function TeamsClient({
                       className={`
                         whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm flex items-center
                         ${activeTab === 'info'
-                          ? 'border-blue-500 text-blue-600'
+                          ? 'border-green-600 text-green-600'
                           : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                         }
                       `}
@@ -381,7 +381,7 @@ export default function TeamsClient({
             ) : (
               <div className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 p-8 text-center">
                 <div className="flex flex-col items-center justify-center py-12">
-                  <Flag className="w-16 h-16 text-blue-600 mb-4" />
+                  <Flag className="w-16 h-16 text-green-600 mb-4" />
                   <h3 className="text-xl font-bold text-gray-800 mb-2">Selectați o echipă</h3>
                   <p className="text-gray-600 max-w-md">
                     Alegeți o echipă din lista din stânga pentru a vedea informații detaliate despre lot și stadion.

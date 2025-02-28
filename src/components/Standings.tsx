@@ -170,14 +170,14 @@ export function Standings({
         {Object.entries(groupedStandings).map(([group, groupStandings]) => (
           <div key={group} className="mb-6 sm:mb-8">
             {Object.keys(groupedStandings).length > 1 && (
-              <h3 className="text-lg sm:text-xl font-semibold mb-3 p-2 sm:p-3 bg-gray-700 text-white rounded-t-lg">
+              <h3 className="text-lg sm:text-xl font-semibold mb-3 p-2 sm:p-3 bg-green-600 text-white rounded-t-lg">
                 Grupa: {group}
               </h3>
             )}
             
             <div className="overflow-x-auto">
               <table className="min-w-full bg-white border border-gray-200">
-                <thead className="bg-gradient-to-r from-gray-700 to-gray-800 text-white">
+                <thead className="bg-green-600 text-white">
                   <tr>
                     <th className="py-2 px-4 border-b text-left">Poziție</th>
                     <th className="py-2 px-4 border-b text-left">Echipă</th>
@@ -324,7 +324,7 @@ export function Standings({
 
   return (
     <div className="container mx-auto p-0 sm:p-4">
-      <div className="mb-6 bg-white p-3 sm:p-4 rounded-lg shadow-md border-t-4 border-gray-600">
+      <div className="mb-6 bg-white p-3 sm:p-4 rounded-lg shadow-md border-t-4 border-green-600">
         <label htmlFor="league-select" className="block text-sm font-medium text-gray-700 mb-2">
           Selectează Liga:
         </label>
@@ -334,7 +334,7 @@ export function Standings({
               key={league.id}
               className={`px-3 sm:px-4 py-2 rounded-lg font-medium transition-colors ${
                 selectedLeague === league.id
-                  ? 'bg-gray-700 text-white shadow-md'
+                  ? 'bg-green-600 text-white shadow-md'
                   : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
               }`}
               onClick={() => handleLeagueChange(league.id)}
@@ -346,7 +346,7 @@ export function Standings({
       </div>
       
       {shouldShowLegend() && (
-        <div className="mb-6 bg-white rounded-lg shadow-sm p-3 sm:p-4 border border-gray-200">
+        <div className="mb-6 bg-white rounded-lg shadow-sm p-3 sm:p-4 border border-green-600/30">
           <h3 className="font-semibold mb-3 text-gray-800">Legendă:</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <div className="flex items-center">

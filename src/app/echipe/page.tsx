@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { TeamsServer } from '~/components/TeamsServer';
+import { Flag } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Echipe SuperLiga | Cluburi Fotbal Românesc',
@@ -13,15 +14,16 @@ export const dynamic = 'force-dynamic';
 export default function TeamsPage() {
   return (
     <div className="container mx-auto p-4">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-center">
-          <span className="inline-block px-6 py-3 bg-gradient-to-r from-blue-700 to-blue-800 text-white rounded-lg shadow-md">
+      <div className="mb-8 text-center">
+        <h1 className="text-3xl font-bold mb-4 inline-flex items-center justify-center">
+          <span className="bg-green-600 text-white px-4 py-2 rounded-lg">
+            <Flag className="h-6 w-6 inline-block mr-2" />
             Echipe SuperLiga
           </span>
         </h1>
       </div>
       
-      <div className="bg-white rounded-xl shadow-lg p-6 border border-blue-100">
+      <div className="border border-green-600/30 rounded-xl p-6 bg-white shadow-sm">
         <TeamsServer />
       </div>
     </div>
