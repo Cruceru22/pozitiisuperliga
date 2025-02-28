@@ -34,11 +34,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ro">
-      <body className={`${inter.className} bg-[#f0f4f0] min-h-screen`}>
+      <body className={`${inter.className} bg-[#f0f4f8] min-h-screen`}>
         <PostHogProvider />
         <GoogleAdsense />
-        <div className="bg-[radial-gradient(#1f5c2e_2px,transparent_2px)] bg-[length:24px_24px]">
-          <header className="bg-gradient-to-r from-green-700 to-green-900 text-white shadow-md border-b-4 border-white">
+        <div className="bg-[radial-gradient(#1e3a8a_2px,transparent_2px)] bg-[length:24px_24px]">
+          <header className="bg-gradient-to-r from-blue-700 to-blue-900 text-white shadow-md border-b-4 border-white">
             <div className="container mx-auto px-4 py-6">
               <div className="flex flex-col md:flex-row justify-between items-center">
                 <div className="text-center md:text-left mb-4 md:mb-0">
@@ -46,7 +46,7 @@ export default function RootLayout({
                     <h1 className="text-2xl md:text-3xl font-bold">
                       <span className="text-white">Poziții</span> <span className="text-yellow-300">SuperLiga</span>
                     </h1>
-                    <p className="text-sm md:text-base text-green-100 mt-1">
+                    <p className="text-sm md:text-base text-blue-100 mt-1">
                       Clasamente și statistici pentru fotbalul românesc
                     </p>
                   </Link>
@@ -55,25 +55,19 @@ export default function RootLayout({
                 <nav className="flex flex-wrap justify-center md:justify-end gap-3">
                   <Link 
                     href="/" 
-                    className="w-[120px] h-[44px] flex items-center justify-center bg-green-600 hover:bg-green-500 rounded-lg shadow-md transition-all font-medium text-white border border-green-500/30"
-                  >
-                    Acasă
-                  </Link>
-                  <Link 
-                    href="/pozitii" 
-                    className="w-[120px] h-[44px] flex items-center justify-center bg-green-600 hover:bg-green-500 rounded-lg shadow-md transition-all font-medium text-white border border-green-500/30"
+                    className="w-[120px] h-[44px] flex items-center justify-center bg-blue-600 hover:bg-blue-500 rounded-lg shadow-md transition-all font-medium text-white border border-blue-500/30"
                   >
                     Clasamente
                   </Link>
                   <Link 
                     href="/echipe" 
-                    className="w-[120px] h-[44px] flex items-center justify-center bg-green-600 hover:bg-green-500 rounded-lg shadow-md transition-all font-medium text-white border border-green-500/30"
+                    className="w-[120px] h-[44px] flex items-center justify-center bg-blue-600 hover:bg-blue-500 rounded-lg shadow-md transition-all font-medium text-white border border-blue-500/30"
                   >
                     Echipe
                   </Link>
                   <Link 
                     href="/stiri" 
-                    className="w-[120px] h-[44px] flex items-center justify-center bg-green-600 hover:bg-green-500 rounded-lg shadow-md transition-all font-medium text-white border border-green-500/30"
+                    className="w-[120px] h-[44px] flex items-center justify-center bg-blue-600 hover:bg-blue-500 rounded-lg shadow-md transition-all font-medium text-white border border-blue-500/30"
                   >
                     Știri
                   </Link>
@@ -81,11 +75,11 @@ export default function RootLayout({
               </div>
             </div>
           </header>
-          <main className="container mx-auto px-4 py-8">
+          <main className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
             {children}
           </main>
-          <footer className="bg-green-900 text-white py-6 border-t-4 border-white">
-            <div className="container mx-auto px-4 text-center">
+          <footer className="bg-blue-900 text-white py-4 sm:py-6 border-t-4 border-white">
+            <div className="container mx-auto px-2 sm:px-4 text-center">
               <p>© {new Date().getFullYear()} Poziții SuperLiga - Statistici Fotbal Românesc</p>
             </div>
           </footer>

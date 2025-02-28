@@ -14,12 +14,10 @@ export function Standings({ defaultLeagueId }: StandingsProps) {
   const [selectedLeague, setSelectedLeague] = useState<string>(defaultLeagueId);
   const [standings, setStandings] = useState<Standing[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     async function fetchStandings() {
       setError(null);
-      setIsLoading(true);
       
       try {
         const response = await fetch(`/api?action=get_standings&league_id=${selectedLeague}`);
@@ -55,8 +53,6 @@ export function Standings({ defaultLeagueId }: StandingsProps) {
           league_id: selectedLeague,
           error: err instanceof Error ? err.message : String(err)
         });
-      } finally {
-        setIsLoading(false);
       }
     }
     
@@ -170,15 +166,15 @@ export function Standings({ defaultLeagueId }: StandingsProps) {
     
     // Champions League positions (top 2)
     if (positionNum <= 2) {
-      return 'bg-gradient-to-r from-blue-50 to-blue-100 border-l-4 border-blue-500';
+      return 'bg-gradient-to-r from-green-50 to-green-100 border-l-4 border-green-500';
     }
     // Europa League position (3rd)
     if (positionNum === 3) {
-      return 'bg-gradient-to-r from-green-50 to-green-100 border-l-4 border-green-500';
+      return 'bg-gradient-to-r from-orange-50 to-orange-100 border-l-4 border-orange-500';
     }
     // Conference League position (4th)
     if (positionNum === 4) {
-      return 'bg-gradient-to-r from-teal-50 to-teal-100 border-l-4 border-teal-500';
+      return 'bg-gradient-to-r from-purple-50 to-purple-100 border-l-4 border-purple-500';
     }
     // Relegation positions (bottom 4 for Liga I)
     if (totalTeams >= 14 && positionNum > totalTeams - 4) {
@@ -240,8 +236,8 @@ export function Standings({ defaultLeagueId }: StandingsProps) {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="mb-6 bg-white p-4 rounded-lg shadow-md border-t-4 border-green-600">
+    <div className="container mx-auto p-0 sm:p-4">
+      <div className="mb-6 bg-white p-3 sm:p-4 rounded-lg shadow-md border-t-4 border-gray-600">
         <label htmlFor="league-select" className="block text-sm font-medium text-gray-700 mb-2">
           Selectează Liga:
         </label>
@@ -249,9 +245,9 @@ export function Standings({ defaultLeagueId }: StandingsProps) {
           {ROMANIAN_LEAGUES.map((league) => (
             <button
               key={league.id}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              className={`px-3 sm:px-4 py-2 rounded-lg font-medium transition-colors ${
                 selectedLeague === league.id
-                  ? 'bg-green-700 text-white shadow-md'
+                  ? 'bg-gray-700 text-white shadow-md'
                   : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
               }`}
               onClick={() => handleLeagueChange(league.id)}
@@ -263,67 +259,65 @@ export function Standings({ defaultLeagueId }: StandingsProps) {
       </div>
       
       {error ? (
-        <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded mb-4 flex items-start">
+        <div className="p-3 sm:p-4 bg-red-100 border border-red-400 text-red-700 rounded mb-4 flex items-start">
           <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0 mt-0.5" />
           <div>
             <h3 className="font-bold">Eroare la încărcarea clasamentului</h3>
-            <p>{error}</p>
+            <p className="text-sm sm:text-base">{error}</p>
           </div>
         </div>
-      ) : isLoading && standings.length === 0 ? (
-        <div className="p-8 bg-white rounded-lg shadow-md text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-700 mb-4"></div>
-          <p className="text-lg font-medium text-gray-700">Se încarcă clasamentul...</p>
-          <p className="text-sm text-gray-500 mt-2">Vă rugăm să așteptați câteva momente</p>
-        </div>
       ) : standings.length === 0 ? (
-        <div className="p-8 bg-white rounded-lg shadow-md text-center">
-          <Trophy className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-xl font-bold text-gray-800 mb-2">Nu există date disponibile</h3>
-          <p className="text-gray-600">
+        <div className="p-4 sm:p-8 bg-white rounded-lg shadow-md text-center">
+          <Trophy className="h-12 sm:h-16 w-12 sm:w-16 text-gray-400 mx-auto mb-4" />
+          <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-2">Nu există date disponibile</h3>
+          <p className="text-sm sm:text-base text-gray-600">
             Nu am găsit informații despre clasament pentru liga selectată.
           </p>
         </div>
       ) : (
         <>
           {shouldShowLegend() && (
-            <div className="mb-6 bg-white rounded-lg shadow-sm p-4 border border-gray-200">
-              <h3 className="font-semibold mb-2 text-gray-800">Legendă:</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div className="mb-6 bg-white rounded-lg shadow-sm p-3 sm:p-4 border border-gray-200">
+              <h3 className="font-semibold mb-3 text-gray-800">Legendă:</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                 <div className="flex items-center">
-                  <div className="w-4 h-4 bg-green-100 border-l-4 border-green-600 mr-2"></div>
+                  <div className="w-6 h-6 bg-green-100 border-l-4 border-green-600 mr-3 flex-shrink-0 rounded-sm"></div>
                   <span className="text-sm">Calificare UEFA Champions League</span>
                 </div>
                 <div className="flex items-center">
-                  <div className="w-4 h-4 bg-blue-100 border-l-4 border-blue-600 mr-2"></div>
+                  <div className="w-6 h-6 bg-orange-100 border-l-4 border-orange-600 mr-3 flex-shrink-0 rounded-sm"></div>
                   <span className="text-sm">Calificare UEFA Europa League</span>
                 </div>
                 <div className="flex items-center">
-                  <div className="w-4 h-4 bg-red-100 border-l-4 border-red-600 mr-2"></div>
+                  <div className="w-6 h-6 bg-purple-100 border-l-4 border-purple-600 mr-3 flex-shrink-0 rounded-sm"></div>
+                  <span className="text-sm">Calificare UEFA Conference League</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-6 h-6 bg-red-100 border-l-4 border-red-600 mr-3 flex-shrink-0 rounded-sm"></div>
                   <span className="text-sm">Retrogradare</span>
                 </div>
               </div>
             </div>
           )}
           {Object.entries(groupedStandings).map(([group, groupStandings]) => (
-            <div key={group} className="mb-8 bg-white rounded-lg shadow-md overflow-hidden">
-              <div className="bg-green-700 text-white p-3">
-                <h3 className="text-xl font-semibold">{group}</h3>
+            <div key={group} className="mb-6 sm:mb-8 bg-white rounded-lg shadow-md overflow-hidden">
+              <div className="bg-gray-700 text-white p-2 sm:p-3">
+                <h3 className="text-lg sm:text-xl font-semibold">{group}</h3>
               </div>
               
               <div className="overflow-x-auto">
                 <table className="min-w-full">
-                  <thead className="bg-gradient-to-r from-green-700 to-green-800 text-white">
+                  <thead className="bg-gradient-to-r from-gray-700 to-gray-800 text-white">
                     <tr>
-                      <th className="py-3 px-4 text-left">Poziție</th>
-                      <th className="py-3 px-4 text-left">Echipă</th>
-                      <th className="py-3 px-4 text-center">MJ</th>
-                      <th className="py-3 px-4 text-center">V</th>
-                      <th className="py-3 px-4 text-center">E</th>
-                      <th className="py-3 px-4 text-center">Î</th>
-                      <th className="py-3 px-4 text-center">GM</th>
-                      <th className="py-3 px-4 text-center">GP</th>
-                      <th className="py-3 px-4 text-center font-bold">PCT</th>
+                      <th className="py-3 px-2 sm:px-4 text-left">Poziție</th>
+                      <th className="py-3 px-2 sm:px-4 text-left">Echipă</th>
+                      <th className="py-3 px-1 sm:px-4 text-center">MJ</th>
+                      <th className="py-3 px-1 sm:px-4 text-center">V</th>
+                      <th className="py-3 px-1 sm:px-4 text-center">E</th>
+                      <th className="py-3 px-1 sm:px-4 text-center">Î</th>
+                      <th className="py-3 px-1 sm:px-4 text-center">GM</th>
+                      <th className="py-3 px-1 sm:px-4 text-center">GP</th>
+                      <th className="py-3 px-1 sm:px-4 text-center font-bold">PCT</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -333,31 +327,31 @@ export function Standings({ defaultLeagueId }: StandingsProps) {
                         className={`${getRowStyle(standing.overall_league_position, groupStandings.length)} transition-colors cursor-pointer`}
                         onClick={() => handleTeamClick(standing)}
                       >
-                        <td className="py-3 px-4 border-b">
+                        <td className="py-3 px-2 sm:px-4 border-b">
                           {selectedLeague === '270' 
                             ? standing.overall_league_position // Use the original position for Liga III
                             : renderPositionIndicator(standing.overall_league_position)
                           }
                         </td>
-                        <td className="py-3 px-4 border-b">
+                        <td className="py-3 px-2 sm:px-4 border-b">
                           <div className="flex items-center">
                             {standing.team_badge && (
                               <img 
                                 src={standing.team_badge || '/placeholder-team.svg'} 
                                 alt={standing.team_name} 
-                                className="w-8 h-8 mr-3 object-contain"
+                                className="w-6 h-6 sm:w-8 sm:h-8 mr-2 sm:mr-3 object-contain"
                               />
                             )}
-                            <span className="font-medium">{standing.team_name}</span>
+                            <span className="font-medium text-sm sm:text-base">{standing.team_name}</span>
                           </div>
                         </td>
-                        <td className="py-3 px-4 border-b text-center">{standing.overall_league_payed}</td>
-                        <td className="py-3 px-4 border-b text-center font-medium text-green-700">{standing.overall_league_W}</td>
-                        <td className="py-3 px-4 border-b text-center font-medium text-amber-600">{standing.overall_league_D}</td>
-                        <td className="py-3 px-4 border-b text-center font-medium text-red-600">{standing.overall_league_L}</td>
-                        <td className="py-3 px-4 border-b text-center">{standing.overall_league_GF}</td>
-                        <td className="py-3 px-4 border-b text-center">{standing.overall_league_GA}</td>
-                        <td className="py-3 px-4 border-b text-center font-bold bg-gray-50">{standing.overall_league_PTS}</td>
+                        <td className="py-3 px-1 sm:px-4 border-b text-center">{standing.overall_league_payed}</td>
+                        <td className="py-3 px-1 sm:px-4 border-b text-center font-medium text-blue-700">{standing.overall_league_W}</td>
+                        <td className="py-3 px-1 sm:px-4 border-b text-center font-medium text-amber-600">{standing.overall_league_D}</td>
+                        <td className="py-3 px-1 sm:px-4 border-b text-center font-medium text-red-600">{standing.overall_league_L}</td>
+                        <td className="py-3 px-1 sm:px-4 border-b text-center">{standing.overall_league_GF}</td>
+                        <td className="py-3 px-1 sm:px-4 border-b text-center">{standing.overall_league_GA}</td>
+                        <td className="py-3 px-1 sm:px-4 border-b text-center font-bold bg-gray-50">{standing.overall_league_PTS}</td>
                       </tr>
                     ))}
                   </tbody>

@@ -12,13 +12,13 @@ export default function NewsPage() {
     <div className="container mx-auto p-4">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-center">
-          <span className="inline-block px-6 py-3 bg-gradient-to-r from-green-700 to-green-800 text-white rounded-lg shadow-md">
+          <span className="inline-block px-6 py-3 bg-gradient-to-r from-blue-700 to-blue-800 text-white rounded-lg shadow-md">
             Știri SuperLiga
           </span>
         </h1>
       </div>
       
-      <div className="bg-white rounded-xl shadow-lg p-6 border border-green-100">
+      <div className="bg-white rounded-xl shadow-lg p-6 border border-blue-100">
         <FootballNewsClient />
       </div>
     </div>

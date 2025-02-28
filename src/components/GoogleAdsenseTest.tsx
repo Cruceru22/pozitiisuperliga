@@ -50,7 +50,7 @@ export default function GoogleAdsenseTest() {
       
       <div className={`p-3 rounded-md ${
         status === 'loading' ? 'bg-yellow-100 text-yellow-800' :
-        status === 'loaded' ? 'bg-green-100 text-green-800' :
+        status === 'loaded' ? 'bg-blue-100 text-blue-800' :
         'bg-red-100 text-red-800'
       }`}>
         <p className="font-medium">
