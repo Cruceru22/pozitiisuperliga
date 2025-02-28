@@ -1,11 +1,14 @@
 import type { Metadata } from 'next';
-import TeamsClient from '~/components/TeamsClient';
+import { TeamsServer } from '~/components/TeamsServer';
 
 export const metadata: Metadata = {
   title: 'Echipe SuperLiga | Cluburi Fotbal Românesc',
   description: 'Informații despre echipele din SuperLiga României. Descoperă loturile, stadioanele și statisticile echipelor de fotbal românești.',
   keywords: 'echipe SuperLiga, cluburi fotbal românesc, loturi Liga 1, stadioane fotbal România',
 };
+
+// Make the page dynamic to read search params
+export const dynamic = 'force-dynamic';
 
 export default function TeamsPage() {
   return (
@@ -19,7 +22,7 @@ export default function TeamsPage() {
       </div>
       
       <div className="bg-white rounded-xl shadow-lg p-6 border border-blue-100">
-        <TeamsClient />
+        <TeamsServer />
       </div>
     </div>
   );

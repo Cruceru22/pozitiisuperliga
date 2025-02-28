@@ -15,11 +15,24 @@ interface NewsArticle {
   };
 }
 
-export default function FootballNewsClient() {
-  const [articles, setArticles] = useState<NewsArticle[]>([]);
-  const [error, setError] = useState<string | null>(null);
+interface FootballNewsClientProps {
+  initialArticles?: NewsArticle[];
+  initialError?: string | null;
+}
+
+export default function FootballNewsClient({
+  initialArticles = [],
+  initialError = null
+}: FootballNewsClientProps) {
+  const [articles, setArticles] = useState<NewsArticle[]>(initialArticles);
+  const [error, setError] = useState<string | null>(initialError);
 
   useEffect(() => {
+    // If we have initial data and no error, don't fetch again
+    if (initialArticles.length > 0 && !initialError) {
+      return;
+    }
+    
     async function fetchNews() {
       try {
         const response = await fetch('/api/football-news');
@@ -57,7 +70,7 @@ export default function FootballNewsClient() {
     }
     
     fetchNews();
-  }, []);
+  }, [initialArticles, initialError]);
   
   // Format date for display
   const formatDate = (dateString: string) => {

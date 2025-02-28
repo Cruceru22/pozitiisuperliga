@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Standings } from '~/components/Standings';
+import { StandingsServer } from '~/components/StandingsServer';
 import { ROMANIAN_LEAGUES } from '~/utils/api';
 
 export const metadata: Metadata = {
@@ -26,7 +26,7 @@ export default function HomePage() {
       </div>
       
       <div className="bg-white rounded-xl shadow-lg p-3 sm:p-6 border border-blue-100">
-        <Standings defaultLeagueId={defaultLeagueId} />
+        <StandingsServer defaultLeagueId={defaultLeagueId} />
       </div>
     </div>
   );

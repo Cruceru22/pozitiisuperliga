@@ -1,21 +1,32 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ROMANIAN_LEAGUES } from '~/utils/api';
+import { ROMANIAN_LEAGUES, api } from '~/utils/api';
 import type { Standing } from '~/types/api';
 import { AlertCircle, Trophy, Medal } from 'lucide-react';
 import { trackEvent } from '~/utils/analytics';
 
 interface StandingsProps {
   defaultLeagueId: string;
+  initialStandings?: Standing[];
+  initialError?: string | null;
 }
 
-export function Standings({ defaultLeagueId }: StandingsProps) {
+export function Standings({ 
+  defaultLeagueId, 
+  initialStandings = [], 
+  initialError = null 
+}: StandingsProps) {
   const [selectedLeague, setSelectedLeague] = useState<string>(defaultLeagueId);
-  const [standings, setStandings] = useState<Standing[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const [standings, setStandings] = useState<Standing[]>(initialStandings);
+  const [error, setError] = useState<string | null>(initialError);
 
   useEffect(() => {
+    // If we're still on the initial league and we have initial data, don't fetch again
+    if (selectedLeague === defaultLeagueId && initialStandings.length > 0 && !initialError) {
+      return;
+    }
+    
     async function fetchStandings() {
       setError(null);
       
@@ -57,7 +68,7 @@ export function Standings({ defaultLeagueId }: StandingsProps) {
     }
     
     fetchStandings();
-  }, [selectedLeague]);
+  }, [selectedLeague, defaultLeagueId, initialStandings, initialError]);
 
   // Handle league change
   const handleLeagueChange = (leagueId: string) => {
@@ -72,7 +83,31 @@ export function Standings({ defaultLeagueId }: StandingsProps) {
 
   // Process standings based on league
   const processedStandings = () => {
-    // For Liga III, group teams by their relative position within original groups
+    if (error) {
+      return (
+        <div className="p-3 sm:p-4 bg-red-100 border border-red-400 text-red-700 rounded mb-4 flex items-start">
+          <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0 mt-0.5" />
+          <div>
+            <h3 className="font-bold text-sm sm:text-base">Eroare la încărcarea clasamentului</h3>
+            <p className="text-sm sm:text-base">{error}</p>
+          </div>
+        </div>
+      );
+    }
+    
+    if (standings.length === 0) {
+      return (
+        <div className="p-4 sm:p-8 text-center">
+          <Trophy className="h-12 sm:h-16 w-12 sm:w-16 text-gray-400 mx-auto mb-4" />
+          <h3 className="text-lg sm:text-xl font-bold text-gray-600 mb-2">Nu există clasament disponibil</h3>
+          <p className="text-sm sm:text-base text-gray-500">Clasamentul pentru această competiție nu este disponibil momentan.</p>
+        </div>
+      );
+    }
+    
+    // Group standings by group if they have group property
+    let groupedStandings: Record<string, Standing[]>;
+    
     if (selectedLeague === '270') {
       // First, sort standings by their position to ensure proper ordering
       const sortedStandings = [...standings].sort((a, b) => {
@@ -96,7 +131,7 @@ export function Standings({ defaultLeagueId }: StandingsProps) {
       }
       
       // Now create new groups based on relative position within each original group
-      const newGroups: Record<string, Standing[]> = {};
+      groupedStandings = {};
       
       // For each relative position (0-9)
       for (let relativePos = 0; relativePos < 10; relativePos++) {
@@ -115,27 +150,12 @@ export function Standings({ defaultLeagueId }: StandingsProps) {
         
         // If we found teams at this relative position, add them to the new groups
         if (teamsAtPosition.length > 0) {
-          newGroups[`Grupa ${relativePos + 1}`] = teamsAtPosition;
+          groupedStandings[`Grupa ${relativePos + 1}`] = teamsAtPosition;
         }
       }
-      
-      return newGroups;
     } else {
-      // For other leagues, first sort by position
-      const sortedStandings = [...standings].sort((a, b) => {
-        const posA = typeof a.overall_league_position === 'string' 
-          ? parseInt(a.overall_league_position, 10) 
-          : a.overall_league_position;
-        
-        const posB = typeof b.overall_league_position === 'string' 
-          ? parseInt(b.overall_league_position, 10) 
-          : b.overall_league_position;
-        
-        return posA - posB;
-      });
-      
-      // Then use the existing group property if available
-      return sortedStandings.reduce<Record<string, Standing[]>>((acc, standing) => {
+      // For other leagues, use the existing group property if available
+      groupedStandings = standings.reduce<Record<string, Standing[]>>((acc, standing) => {
         const group = standing.league_round ?? 'Grupa Implicită';
         if (!acc[group]) {
           acc[group] = [];
@@ -144,9 +164,76 @@ export function Standings({ defaultLeagueId }: StandingsProps) {
         return acc;
       }, {});
     }
+    
+    return (
+      <>
+        {Object.entries(groupedStandings).map(([group, groupStandings]) => (
+          <div key={group} className="mb-6 sm:mb-8">
+            {Object.keys(groupedStandings).length > 1 && (
+              <h3 className="text-lg sm:text-xl font-semibold mb-3 p-2 sm:p-3 bg-gray-700 text-white rounded-t-lg">
+                Grupa: {group}
+              </h3>
+            )}
+            
+            <div className="overflow-x-auto">
+              <table className="min-w-full bg-white border border-gray-200">
+                <thead className="bg-gradient-to-r from-gray-700 to-gray-800 text-white">
+                  <tr>
+                    <th className="py-2 px-4 border-b text-left">Poziție</th>
+                    <th className="py-2 px-4 border-b text-left">Echipă</th>
+                    <th className="py-2 px-4 border-b text-center">MJ</th>
+                    <th className="py-2 px-4 border-b text-center">V</th>
+                    <th className="py-2 px-4 border-b text-center">E</th>
+                    <th className="py-2 px-4 border-b text-center">Î</th>
+                    <th className="py-2 px-4 border-b text-center">GM</th>
+                    <th className="py-2 px-4 border-b text-center">GP</th>
+                    <th className="py-2 px-4 border-b text-center">PCT</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {groupStandings.map((standing) => (
+                    <tr 
+                      key={standing.team_id} 
+                      className={`hover:bg-gray-50 cursor-pointer ${getRowStyle(standing.overall_league_position, groupStandings.length)}`}
+                      onClick={() => handleTeamClick(standing)}
+                    >
+                      <td className="py-2 px-4 border-b">
+                        <div className="flex items-center">
+                          {renderPositionIndicator(standing.overall_league_position)}
+                        </div>
+                      </td>
+                      <td className="py-2 px-4 border-b">
+                        <div className="flex items-center">
+                          {standing.team_badge && (
+                            <img 
+                              src={standing.team_badge || '/placeholder-team.svg'} 
+                              alt={standing.team_name} 
+                              className="w-6 h-6 mr-2"
+                              onError={(e) => {
+                                e.currentTarget.src = '/placeholder-team.svg';
+                              }}
+                            />
+                          )}
+                          <span className="font-medium">{standing.team_name}</span>
+                        </div>
+                      </td>
+                      <td className="py-2 px-4 border-b text-center">{standing.overall_league_payed}</td>
+                      <td className="py-2 px-4 border-b text-center">{standing.overall_league_W}</td>
+                      <td className="py-2 px-4 border-b text-center">{standing.overall_league_D}</td>
+                      <td className="py-2 px-4 border-b text-center">{standing.overall_league_L}</td>
+                      <td className="py-2 px-4 border-b text-center">{standing.overall_league_GF}</td>
+                      <td className="py-2 px-4 border-b text-center">{standing.overall_league_GA}</td>
+                      <td className="py-2 px-4 border-b text-center font-bold">{standing.overall_league_PTS}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        ))}
+      </>
+    );
   };
-
-  const groupedStandings = processedStandings();
 
   // League name mapping
   const leagueNames: Record<string, string> = {
@@ -258,109 +345,30 @@ export function Standings({ defaultLeagueId }: StandingsProps) {
         </div>
       </div>
       
-      {error ? (
-        <div className="p-3 sm:p-4 bg-red-100 border border-red-400 text-red-700 rounded mb-4 flex items-start">
-          <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0 mt-0.5" />
-          <div>
-            <h3 className="font-bold">Eroare la încărcarea clasamentului</h3>
-            <p className="text-sm sm:text-base">{error}</p>
+      {shouldShowLegend() && (
+        <div className="mb-6 bg-white rounded-lg shadow-sm p-3 sm:p-4 border border-gray-200">
+          <h3 className="font-semibold mb-3 text-gray-800">Legendă:</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div className="flex items-center">
+              <div className="w-6 h-6 bg-green-100 border-l-4 border-green-600 mr-3 flex-shrink-0 rounded-sm"></div>
+              <span className="text-sm">Calificare UEFA Champions League</span>
+            </div>
+            <div className="flex items-center">
+              <div className="w-6 h-6 bg-orange-100 border-l-4 border-orange-600 mr-3 flex-shrink-0 rounded-sm"></div>
+              <span className="text-sm">Calificare UEFA Europa League</span>
+            </div>
+            <div className="flex items-center">
+              <div className="w-6 h-6 bg-purple-100 border-l-4 border-purple-600 mr-3 flex-shrink-0 rounded-sm"></div>
+              <span className="text-sm">Calificare UEFA Conference League</span>
+            </div>
+            <div className="flex items-center">
+              <div className="w-6 h-6 bg-red-100 border-l-4 border-red-600 mr-3 flex-shrink-0 rounded-sm"></div>
+              <span className="text-sm">Retrogradare</span>
+            </div>
           </div>
         </div>
-      ) : standings.length === 0 ? (
-        <div className="p-4 sm:p-8 bg-white rounded-lg shadow-md text-center">
-          <Trophy className="h-12 sm:h-16 w-12 sm:w-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-2">Nu există date disponibile</h3>
-          <p className="text-sm sm:text-base text-gray-600">
-            Nu am găsit informații despre clasament pentru liga selectată.
-          </p>
-        </div>
-      ) : (
-        <>
-          {shouldShowLegend() && (
-            <div className="mb-6 bg-white rounded-lg shadow-sm p-3 sm:p-4 border border-gray-200">
-              <h3 className="font-semibold mb-3 text-gray-800">Legendă:</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                <div className="flex items-center">
-                  <div className="w-6 h-6 bg-green-100 border-l-4 border-green-600 mr-3 flex-shrink-0 rounded-sm"></div>
-                  <span className="text-sm">Calificare UEFA Champions League</span>
-                </div>
-                <div className="flex items-center">
-                  <div className="w-6 h-6 bg-orange-100 border-l-4 border-orange-600 mr-3 flex-shrink-0 rounded-sm"></div>
-                  <span className="text-sm">Calificare UEFA Europa League</span>
-                </div>
-                <div className="flex items-center">
-                  <div className="w-6 h-6 bg-purple-100 border-l-4 border-purple-600 mr-3 flex-shrink-0 rounded-sm"></div>
-                  <span className="text-sm">Calificare UEFA Conference League</span>
-                </div>
-                <div className="flex items-center">
-                  <div className="w-6 h-6 bg-red-100 border-l-4 border-red-600 mr-3 flex-shrink-0 rounded-sm"></div>
-                  <span className="text-sm">Retrogradare</span>
-                </div>
-              </div>
-            </div>
-          )}
-          {Object.entries(groupedStandings).map(([group, groupStandings]) => (
-            <div key={group} className="mb-6 sm:mb-8 bg-white rounded-lg shadow-md overflow-hidden">
-              <div className="bg-gray-700 text-white p-2 sm:p-3">
-                <h3 className="text-lg sm:text-xl font-semibold">{group}</h3>
-              </div>
-              
-              <div className="overflow-x-auto">
-                <table className="min-w-full">
-                  <thead className="bg-gradient-to-r from-gray-700 to-gray-800 text-white">
-                    <tr>
-                      <th className="py-3 px-2 sm:px-4 text-left">Poziție</th>
-                      <th className="py-3 px-2 sm:px-4 text-left">Echipă</th>
-                      <th className="py-3 px-1 sm:px-4 text-center">MJ</th>
-                      <th className="py-3 px-1 sm:px-4 text-center">V</th>
-                      <th className="py-3 px-1 sm:px-4 text-center">E</th>
-                      <th className="py-3 px-1 sm:px-4 text-center">Î</th>
-                      <th className="py-3 px-1 sm:px-4 text-center">GM</th>
-                      <th className="py-3 px-1 sm:px-4 text-center">GP</th>
-                      <th className="py-3 px-1 sm:px-4 text-center font-bold">PCT</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {groupStandings.map((standing, index) => (
-                      <tr 
-                        key={standing.team_id} 
-                        className={`${getRowStyle(standing.overall_league_position, groupStandings.length)} transition-colors cursor-pointer`}
-                        onClick={() => handleTeamClick(standing)}
-                      >
-                        <td className="py-3 px-2 sm:px-4 border-b">
-                          {selectedLeague === '270' 
-                            ? standing.overall_league_position // Use the original position for Liga III
-                            : renderPositionIndicator(standing.overall_league_position)
-                          }
-                        </td>
-                        <td className="py-3 px-2 sm:px-4 border-b">
-                          <div className="flex items-center">
-                            {standing.team_badge && (
-                              <img 
-                                src={standing.team_badge || '/placeholder-team.svg'} 
-                                alt={standing.team_name} 
-                                className="w-6 h-6 sm:w-8 sm:h-8 mr-2 sm:mr-3 object-contain"
-                              />
-                            )}
-                            <span className="font-medium text-sm sm:text-base">{standing.team_name}</span>
-                          </div>
-                        </td>
-                        <td className="py-3 px-1 sm:px-4 border-b text-center">{standing.overall_league_payed}</td>
-                        <td className="py-3 px-1 sm:px-4 border-b text-center font-medium text-blue-700">{standing.overall_league_W}</td>
-                        <td className="py-3 px-1 sm:px-4 border-b text-center font-medium text-amber-600">{standing.overall_league_D}</td>
-                        <td className="py-3 px-1 sm:px-4 border-b text-center font-medium text-red-600">{standing.overall_league_L}</td>
-                        <td className="py-3 px-1 sm:px-4 border-b text-center">{standing.overall_league_GF}</td>
-                        <td className="py-3 px-1 sm:px-4 border-b text-center">{standing.overall_league_GA}</td>
-                        <td className="py-3 px-1 sm:px-4 border-b text-center font-bold bg-gray-50">{standing.overall_league_PTS}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          ))}
-        </>
       )}
+      {processedStandings()}
     </div>
   );
 }

@@ -14,14 +14,27 @@ const getImageSrc = (url: string | null | undefined): string | null => {
   return url;
 };
 
-export default function TeamsClient() {
-  const [teams, setTeams] = useState<Team[]>([]);
+interface TeamsClientProps {
+  initialTeams?: Team[];
+  initialError?: string | null;
+}
+
+export default function TeamsClient({ 
+  initialTeams = [], 
+  initialError = null 
+}: TeamsClientProps) {
+  const [teams, setTeams] = useState<Team[]>(initialTeams);
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [activeTab, setActiveTab] = useState<'squad' | 'info'>('squad');
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(initialError);
   const teamDetailsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // If we have initial data and no error, don't fetch again
+    if (initialTeams.length > 0 && !initialError) {
+      return;
+    }
+    
     async function fetchTeams() {
       try {
         // Use the first Romanian league ID (Liga I)
@@ -57,7 +70,7 @@ export default function TeamsClient() {
     }
 
     fetchTeams();
-  }, []);
+  }, [initialTeams, initialError]);
 
   // Scroll to team details when a team is selected
   useEffect(() => {

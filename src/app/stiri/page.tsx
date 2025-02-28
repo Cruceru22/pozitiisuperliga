@@ -1,11 +1,14 @@
 import type { Metadata } from 'next';
-import FootballNewsClient from '~/components/FootballNewsClient';
+import { FootballNewsServer } from '~/components/FootballNewsServer';
 
 export const metadata: Metadata = {
   title: 'Știri SuperLiga | Noutăți Fotbal Românesc',
   description: 'Cele mai recente știri despre fotbalul românesc și SuperLiga. Urmărește ultimele noutăți, transferuri și evenimente din fotbalul românesc.',
   keywords: 'știri fotbal românesc, noutăți SuperLiga, transferuri Liga 1, fotbal România știri, actualitate fotbal',
 };
+
+// Make the page dynamic to read search params
+export const dynamic = 'force-dynamic';
 
 export default function NewsPage() {
   return (
@@ -19,7 +22,7 @@ export default function NewsPage() {
       </div>
       
       <div className="bg-white rounded-xl shadow-lg p-6 border border-blue-100">
-        <FootballNewsClient />
+        <FootballNewsServer />
       </div>
     </div>
   );

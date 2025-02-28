@@ -213,6 +213,61 @@ export const api = {
         { action: 'get_topscorers', league_id: leagueId },
         `topscorers-${leagueId}`
       );
+    },
+    
+    getFootballNews: async () => {
+      interface NewsArticle {
+        title: string;
+        description: string;
+        url: string;
+        urlToImage: string | null;
+        publishedAt: string;
+        source: {
+          name: string;
+        };
+      }
+      
+      interface NewsResponse {
+        articles: NewsArticle[];
+        status: string;
+        totalResults: number;
+      }
+      
+      try {
+        // API key from environment variables
+        const apiKey = process.env.NEXT_PUBLIC_NEWSAPI_KEY;
+        
+        if (!apiKey) {
+          throw new Error('News API key is not configured');
+        }
+        
+        // Build the URL with query parameters
+        const url = new URL('https://newsapi.org/v2/everything');
+        url.searchParams.append('q', 'SuperLiga');
+        url.searchParams.append('language', 'ro');
+        url.searchParams.append('sortBy', 'publishedAt');
+        url.searchParams.append('pageSize', '20');
+        
+        // Fetch news about Romanian football with caching
+        const response = await fetch(url.toString(), {
+          headers: {
+            'X-Api-Key': apiKey
+          },
+          next: { 
+            revalidate: parseInt(process.env.REVALIDATE_NEWS ?? '1800', 10),
+            tags: ['football-news']
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error(`NewsAPI responded with status: ${response.status}`);
+        }
+        
+        return await response.json() as NewsResponse;
+      } catch (error) {
+        console.error('Error fetching football news:', error);
+        throw error;
+      }
     }
   }
 }; 
