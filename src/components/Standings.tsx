@@ -152,22 +152,16 @@ export function Standings({
     
     const positionNum = typeof position === 'string' ? parseInt(position, 10) : position;
     
-    // Champions League positions (top 2)
-    if (positionNum <= 2) {
-      return 'bg-gradient-to-r from-green-50 to-green-100 border-l-4 border-green-500';
+    // Playoff qualification (top 6 teams)
+    if (positionNum <= 6) {
+      return 'bg-gradient-to-r from-green-50 to-green-100 border-l-4 border-green-600';
     }
-    // Europa League position (3rd)
-    if (positionNum === 3) {
-      return 'bg-gradient-to-r from-orange-50 to-orange-100 border-l-4 border-orange-500';
+    
+    // Playout qualification (bottom 10 teams)
+    if (positionNum > 6) {
+      return 'bg-gradient-to-r from-blue-50 to-blue-100 border-l-4 border-blue-600';
     }
-    // Conference League position (4th)
-    if (positionNum === 4) {
-      return 'bg-gradient-to-r from-purple-50 to-purple-100 border-l-4 border-purple-500';
-    }
-    // Relegation positions (bottom 4 for Liga I)
-    if (totalTeams >= 14 && positionNum > totalTeams - 4) {
-      return 'bg-gradient-to-r from-red-50 to-red-100 border-l-4 border-red-500';
-    }
+    
     // Default
     return 'hover:bg-gray-50';
   };
@@ -185,22 +179,6 @@ export function Standings({
       return (
         <div className="flex items-center">
           <Trophy className="h-5 w-5 text-yellow-500 mr-2" />
-          <span>{position}</span>
-        </div>
-      );
-    }
-    if (positionNum === 2) {
-      return (
-        <div className="flex items-center">
-          <Medal className="h-5 w-5 text-gray-400 mr-2" />
-          <span>{position}</span>
-        </div>
-      );
-    }
-    if (positionNum === 3) {
-      return (
-        <div className="flex items-center">
-          <Medal className="h-5 w-5 text-amber-600 mr-2" />
           <span>{position}</span>
         </div>
       );
@@ -434,22 +412,14 @@ export function Standings({
       {shouldShowLegend() && (
         <div className="mb-6 bg-white rounded-lg shadow-sm p-3 sm:p-4 border border-green-600/30">
           <h3 className="font-semibold mb-3 text-gray-800">Legendă:</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="flex items-center">
               <div className="w-6 h-6 bg-green-100 border-l-4 border-green-600 mr-3 flex-shrink-0 rounded-sm"></div>
-              <span className="text-sm">Calificare UEFA Champions League</span>
+              <span className="text-sm">Calificare Play-Off (Locurile 1-6)</span>
             </div>
             <div className="flex items-center">
-              <div className="w-6 h-6 bg-orange-100 border-l-4 border-orange-600 mr-3 flex-shrink-0 rounded-sm"></div>
-              <span className="text-sm">Calificare UEFA Europa League</span>
-            </div>
-            <div className="flex items-center">
-              <div className="w-6 h-6 bg-purple-100 border-l-4 border-purple-600 mr-3 flex-shrink-0 rounded-sm"></div>
-              <span className="text-sm">Calificare UEFA Conference League</span>
-            </div>
-            <div className="flex items-center">
-              <div className="w-6 h-6 bg-red-100 border-l-4 border-red-600 mr-3 flex-shrink-0 rounded-sm"></div>
-              <span className="text-sm">Retrogradare</span>
+              <div className="w-6 h-6 bg-blue-100 border-l-4 border-blue-600 mr-3 flex-shrink-0 rounded-sm"></div>
+              <span className="text-sm">Calificare Play-Out (Locurile 7-16)</span>
             </div>
           </div>
         </div>
