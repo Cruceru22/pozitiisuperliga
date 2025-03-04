@@ -79,8 +79,22 @@ export default function RootLayout({
             {children}
           </main>
           <footer className="mt-auto py-6 bg-green-600 text-white">
-            <div className="container mx-auto px-2 sm:px-4 text-center">
-              <p>© {new Date().getFullYear()} Poziții SuperLiga - Statistici Fotbal Românesc</p>
+            <div className="container mx-auto px-2 sm:px-4">
+              <div className="flex flex-col items-center">
+                <p className="mb-4">© {new Date().getFullYear()} Pozitii SuperLiga - Statistici Fotbal Românesc</p>
+                
+                <div className="flex flex-wrap justify-center gap-4 text-sm">
+                  <Link href="/politica-de-confidentialitate" className="text-green-100 hover:text-white transition-colors">
+                    Politica de Confidențialitate
+                  </Link>
+                  <Link href="/politica-de-cookies" className="text-green-100 hover:text-white transition-colors">
+                    Politica de Cookies
+                  </Link>
+                  <Link href="/termeni-si-conditii" className="text-green-100 hover:text-white transition-colors">
+                    Termeni și Condiții
+                  </Link>
+                </div>
+              </div>
             </div>
           </footer>
         </div>
