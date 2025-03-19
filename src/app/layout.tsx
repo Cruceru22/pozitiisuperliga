@@ -4,6 +4,7 @@ import "./globals.css";
 import Link from "next/link";
 import PostHogProvider from "~/providers/PostHogProvider";
 import { GoogleAdSenseScript } from "~/components/GoogleAdSenseScript";
+import { GoogleAdsenseResponsive } from "~/components/GoogleAdsense";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,7 +23,7 @@ export const metadata: Metadata = {
     images: ['/apple-icon.png'],
   },
   other: {
-    'google-adsense-account': 'pub-8684151047710849',
+    'google-adsense-account': 'ca-pub-8684151047710849',
     'content-security-policy': "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://pagead2.googlesyndication.com https://partner.googleadservices.com https://tpc.googlesyndication.com https://www.googletagservices.com https://adservice.google.com https://www.google-analytics.com; frame-src 'self' https://googleads.g.doubleclick.net https://tpc.googlesyndication.com; img-src 'self' data: https: http:; style-src 'self' 'unsafe-inline'; connect-src 'self' https://pagead2.googlesyndication.com https://www.google-analytics.com;"
   },
 };
@@ -37,7 +38,7 @@ export default function RootLayout({
       <body className={`${inter.className} min-h-screen flex flex-col bg-gray-50`}>
         <PostHogProvider />
         <GoogleAdSenseScript />
-        <div className="flex flex-col min-h-screen bg-[radial-gradient(#000000_2px,transparent_2px)] bg-[length:24px_24px]">
+        <div className="flex flex-col min-h-screen bg-[radial-gradient(#000000_2px,transparent_2px)] bg-[size:24px_24px]">
           <header className="bg-green-600 text-white shadow-md border-b-4 border-white">
             <div className="container mx-auto px-4 py-6">
               <div className="flex flex-col md:flex-row justify-between items-center">
@@ -81,6 +82,10 @@ export default function RootLayout({
           <footer className="mt-auto py-6 bg-green-600 text-white w-full">
             <div className="container mx-auto px-2 sm:px-4">
               <div className="flex flex-col items-center">
+                <div className="mb-6 w-full max-w-[728px]">
+                  <GoogleAdsenseResponsive className="mx-auto bg-white rounded-lg p-2" />
+                </div>
+                
                 <p className="mb-4">© {new Date().getFullYear()} Pozitii SuperLiga - Statistici Fotbal Românesc</p>
                 
                 <div className="flex flex-wrap justify-center gap-4 text-sm">

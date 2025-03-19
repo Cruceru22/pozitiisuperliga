@@ -1,7 +1,7 @@
 'use client';
 
 import Script from 'next/script';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 // Add type declaration for adsbygoogle
 declare global {
@@ -19,32 +19,127 @@ interface GoogleAdsenseProps {
   className?: string;
 }
 
+const ADSENSE_PUB_ID = process.env.NEXT_PUBLIC_ADSENSE_PUB_ID || '';
+
 export function GoogleAdsenseAd({
-  client = 'pub-8684151047710849',
+  client = ADSENSE_PUB_ID,
   slot,
   format = 'auto',
   responsive = true,
   style = {},
   className = '',
 }: GoogleAdsenseProps) {
+  const [isClient, setIsClient] = useState(false);
+  const adRef = useRef<HTMLDivElement>(null);
+  const [isAdPushed, setIsAdPushed] = useState(false);
+
   useEffect(() => {
-    // Push the ad to AdSense
-    try {
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
-    } catch (error) {
-      console.error('AdSense ad push error:', error);
+    setIsClient(true);
+    
+    if (!isAdPushed && adRef.current) {
+      try {
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+        setIsAdPushed(true);
+      } catch (error) {
+        console.error('AdSense ad push error:', error);
+      }
     }
-  }, [client]);
+  }, []);
+
+  if (!isClient) {
+    return <div className={`ad-container ${className}`} ref={adRef}></div>;
+  }
 
   return (
-    <div className={`ad-container ${className}`}>
+    <div className={`ad-container ${className}`} ref={adRef}>
       <ins
         className="adsbygoogle"
-        style={style}
+        style={{ display: 'block', ...style }}
         data-ad-client={client}
         data-ad-slot={slot}
         data-ad-format={format}
         data-full-width-responsive={responsive ? 'true' : 'false'}
+      />
+    </div>
+  );
+}
+
+// New component for the autorelaxed ad format
+export function GoogleAdsenseAutorelaxed({
+  className = '',
+}: {
+  className?: string;
+}) {
+  const [isClient, setIsClient] = useState(false);
+  const adRef = useRef<HTMLDivElement>(null);
+  const [isAdPushed, setIsAdPushed] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+    
+    if (!isAdPushed && adRef.current) {
+      try {
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+        setIsAdPushed(true);
+      } catch (error) {
+        console.error('AdSense autorelaxed ad push error:', error);
+      }
+    }
+  }, []);
+
+  if (!isClient) {
+    return <div className={`ad-container-autorelaxed ${className}`} ref={adRef}></div>;
+  }
+
+  return (
+    <div className={`ad-container-autorelaxed ${className}`} ref={adRef}>
+      <ins 
+        className="adsbygoogle"
+        style={{ display: 'block' }}
+        data-ad-format="autorelaxed"
+        data-ad-client={ADSENSE_PUB_ID}
+        data-ad-slot="7348178412"
+      />
+    </div>
+  );
+}
+
+// New component for the regular responsive ad
+export function GoogleAdsenseResponsive({
+  className = '',
+}: {
+  className?: string;
+}) {
+  const [isClient, setIsClient] = useState(false);
+  const adRef = useRef<HTMLDivElement>(null);
+  const [isAdPushed, setIsAdPushed] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+    
+    if (!isAdPushed && adRef.current) {
+      try {
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+        setIsAdPushed(true);
+      } catch (error) {
+        console.error('AdSense responsive ad push error:', error);
+      }
+    }
+  }, []);
+
+  if (!isClient) {
+    return <div className={`ad-container-responsive ${className}`} ref={adRef}></div>;
+  }
+
+  return (
+    <div className={`ad-container-responsive ${className}`} ref={adRef}>
+      <ins 
+        className="adsbygoogle"
+        style={{ display: 'block' }}
+        data-ad-client={ADSENSE_PUB_ID}
+        data-ad-slot="5017233395"
+        data-ad-format="auto"
+        data-full-width-responsive="true"
       />
     </div>
   );
@@ -59,7 +154,7 @@ export default function GoogleAdsense() {
       <Script
         id="google-adsense"
         async
-        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=pub-8684151047710849"
+        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_PUB_ID}`}
         crossOrigin="anonymous"
         strategy="afterInteractive"
         onLoad={() => {
@@ -72,8 +167,6 @@ export default function GoogleAdsense() {
           console.error('This may be caused by an ad blocker or network issue');
           setScriptError(error);
           setScriptLoaded(false);
-          
-          // You could implement a fallback or retry mechanism here if needed
         }}
       />
       

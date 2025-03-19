@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import type { Standing } from '~/types/api';
 import { AlertCircle, Trophy } from 'lucide-react';
+import { GoogleAdsenseResponsive } from './GoogleAdsense';
 
 interface StandingsProps {
   initialStandings?: Standing[];
@@ -244,6 +245,11 @@ export function Standings({
             </tbody>
           </table>
         </div>
+      </div>
+      
+      {/* AdSense ad after the standings table */}
+      <div className="mt-4 mb-6">
+        <GoogleAdsenseResponsive className="w-full" />
       </div>
     </div>
   );

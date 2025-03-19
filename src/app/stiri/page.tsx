@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { FootballNewsServer } from '~/components/FootballNewsServer';
 import { Newspaper } from 'lucide-react';
+import { GoogleAdsenseAutorelaxed, GoogleAdsenseResponsive } from '~/components/GoogleAdsense';
 
 export const metadata: Metadata = {
   title: 'Știri SuperLiga | Noutăți Fotbal Românesc',
@@ -14,7 +15,12 @@ export const dynamic = 'force-dynamic';
 export default function NewsPage() {
   return (
     <div className="container mx-auto p-2 sm:p-4">
-      <div className=" text-center">
+      {/* Top Ad */}
+      <div className="mb-6">
+        <GoogleAdsenseAutorelaxed className="mx-auto" />
+      </div>
+
+      <div className="text-center">
         <h1 className="text-3xl font-bold mb-4 inline-flex items-center justify-center">
           <span className="bg-green-600 text-white px-4 py-2 rounded-lg">
             Știri Fotbal
@@ -24,6 +30,11 @@ export default function NewsPage() {
       
       <div className="border border-green-600/30 rounded-xl p-6 bg-white shadow-sm">
         <FootballNewsServer />
+      </div>
+
+      {/* Bottom Ad */}
+      <div className="mt-6">
+        <GoogleAdsenseResponsive className="mx-auto" />
       </div>
     </div>
   );

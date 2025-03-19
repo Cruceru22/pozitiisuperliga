@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { StandingsServer } from '~/components/StandingsServer';
+import { GoogleAdsenseAutorelaxed, GoogleAdsenseResponsive } from '~/components/GoogleAdsense';
 
 export const metadata: Metadata = {
   title: 'Poziții SuperLiga | Clasament Fotbal Românesc',
@@ -21,8 +22,18 @@ export default function HomePage() {
         </h1>
       </div>
       
+      {/* AutoRelaxed Ad at the top */}
+      <div className="mb-6">
+        <GoogleAdsenseAutorelaxed className="w-full" />
+      </div>
+      
       <div className="border border-green-600/30 rounded-xl p-6 bg-white shadow-sm">
         <StandingsServer defaultLeagueId="272" />
+      </div>
+      
+      {/* Responsive Ad at the bottom */}
+      <div className="mt-8">
+        <GoogleAdsenseResponsive className="w-full" />
       </div>
     </div>
   );

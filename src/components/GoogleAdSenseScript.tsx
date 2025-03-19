@@ -4,6 +4,6 @@ import { GoogleAdSense } from "nextjs-google-adsense";
 
 export function GoogleAdSenseScript() {
   return (
-    <GoogleAdSense publisherId="pub-8684151047710849" />
+    <GoogleAdSense publisherId="ca-pub-8684151047710849" />
   );
 } 
