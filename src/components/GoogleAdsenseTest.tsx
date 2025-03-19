@@ -80,7 +80,7 @@ export default function GoogleAdsenseTest() {
         <h3 className="font-bold mb-2">Debug Information:</h3>
         <ul className="space-y-1">
           {debugInfo.map((info, index) => (
-            <li key={index}>{info}</li>
+            <li key={`debug-${index}-${info.substring(0, 10)}`}>{info}</li>
           ))}
         </ul>
       </div>

@@ -22,6 +22,7 @@
     "lucide-react": "^0.476.0",
     "newsapi": "^2.4.1",
     "next": "^15.0.1",
+    "nextjs-google-adsense": "^1.0.0",
     "posthog-js": "^1.224.0",
     "posthog-node": "^4.8.1",
     "react": "^18.3.1",

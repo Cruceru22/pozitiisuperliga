@@ -1,7 +1,5 @@
 import type { Metadata } from 'next';
 import { StandingsServer } from '~/components/StandingsServer';
-import { ROMANIAN_LEAGUES } from '~/utils/api';
-import { Trophy } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Poziții SuperLiga | Clasament Fotbal Românesc',
@@ -13,9 +11,6 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic';
 
 export default function HomePage() {
-  // Default league ID for initial render
-  const defaultLeagueId = ROMANIAN_LEAGUES[0].id;
-  
   return (
     <div className="container mx-auto p-2 sm:p-4">
       <div className="mb-4 text-center">
@@ -27,7 +22,7 @@ export default function HomePage() {
       </div>
       
       <div className="border border-green-600/30 rounded-xl p-6 bg-white shadow-sm">
-        <StandingsServer defaultLeagueId={defaultLeagueId} />
+        <StandingsServer defaultLeagueId="272" />
       </div>
     </div>
   );

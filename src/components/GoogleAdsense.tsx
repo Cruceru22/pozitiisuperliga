@@ -20,7 +20,7 @@ interface GoogleAdsenseProps {
 }
 
 export function GoogleAdsenseAd({
-  client = 'ca-pub-8684151047710849',
+  client = 'pub-8684151047710849',
   slot,
   format = 'auto',
   responsive = true,
@@ -59,7 +59,7 @@ export default function GoogleAdsense() {
       <Script
         id="google-adsense"
         async
-        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8684151047710849"
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=pub-8684151047710849"
         crossOrigin="anonymous"
         strategy="afterInteractive"
         onLoad={() => {

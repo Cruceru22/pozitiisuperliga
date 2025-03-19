@@ -26,6 +26,9 @@ importers:
       next:
         specifier: ^15.0.1
         version: 15.1.7(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      nextjs-google-adsense:
+        specifier: ^1.0.0
+        version: 1.0.0(next@15.1.7(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       posthog-js:
         specifier: ^1.224.0
         version: 1.224.0(@rrweb/types@2.0.0-alpha.17)
@@ -1325,6 +1328,12 @@ packages:
         optional: true
       sass:
         optional: true
+
+  nextjs-google-adsense@1.0.0:
+    resolution: {integrity: sha512-gVqV9EH1JkDYT70M8AlqCTYq2DrmtJ8nL8xajXp+D5vK+U5PUwCJHi5XSuD9W0nFMBLYDWhVx452c8OcrI53/A==}
+    peerDependencies:
+      next: '>=11.0.0'
+      react: '>=17.0.0'
 
   node-fetch@2.7.0:
     resolution: {integrity: sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A==}
@@ -3336,6 +3345,13 @@ snapshots:
     transitivePeerDependencies:
       - '@babel/core'
       - babel-plugin-macros
+
+  nextjs-google-adsense@1.0.0(next@15.1.7(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1):
+    dependencies:
+      next: 15.1.7(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react: 18.3.1
+    optionalDependencies:
+      fsevents: 2.3.3
 
   node-fetch@2.7.0:
     dependencies:

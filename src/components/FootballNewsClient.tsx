@@ -120,7 +120,7 @@ export default function FootballNewsClient({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {articles.map((article, index) => (
           <a 
-            key={index} 
+            key={`${article.title.substring(0, 40)}-${article.publishedAt}-${index}`}
             href={article.url} 
             target="_blank" 
             rel="noopener noreferrer"
